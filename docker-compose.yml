@@ -1,0 +1,30 @@
+version: '3'
+services:
+  zookeeper:
+    image: zookeeper:3.5
+    ports:
+      - "2181:2181"
+
+  bully:
+    build: .
+    command: ["python", "bully.py", "1"]
+    depends_on:
+      - zookeeper
+
+  raft:
+    build: .
+    command: ["python", "raft.py", "1"]
+    depends_on:
+      - zookeeper
+
+  proof_of_work:
+    build: .
+    command: ["python", "proof_of_work.py"]
+    depends_on:
+      - zookeeper
+
+  proof_of_stake:
+    build: .
+    command: ["python", "proof_of_stake.py"]
+    depends_on:
+      - zookeeper
