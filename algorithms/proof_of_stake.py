@@ -1,39 +1,51 @@
 # algorithms/proof_of_stake.py
-import random
+import sys
 import time
+import random
+import json
 
-class ProofOfStake:
-    def __init__(self, stakeholders):
-        self.stakeholders = stakeholders
+class ProofOfStakeAlgorithm:
+    def __init__(self, nodes, stakes, node_id):
+        self.nodes = nodes
+        self.stakes = stakes
+        self.node_id = node_id
+        self.coordinator = None
         self.message_count = 0
-        self.start_time = time.time()
+        self.start_time = None
 
-    def select_validator(self):
-        total_stake = sum(self.stakeholders.values())
-        random_choice = random.uniform(0, total_stake)
+    def select_leader(self):
+        total_stake = sum(self.stakes.values())
+        chosen = random.uniform(0, total_stake)
         cumulative = 0
-        for stakeholder, stake in self.stakeholders.items():
-            self.message_count += 1
+        
+        for node, stake in self.stakes.items():
             cumulative += stake
-            if cumulative >= random_choice:
-                return stakeholder
+            if cumulative >= chosen:
+                self.coordinator = node
+                break
+
+        print(f"Node {self.coordinator} is selected as the leader based on stake")
 
     def run(self):
         self.start_time = time.time()
-        validator = self.select_validator()
+        self.select_leader()
         end_time = time.time()
-        print(f"Selected validator: {validator}")
-        print(f"Convergence Time: {end_time - self.start_time} seconds")
-        print(f"Message Count: {self.message_count}")
-        # Store metrics
         self.store_metrics(end_time - self.start_time, self.message_count)
 
     def store_metrics(self, convergence_time, message_count):
-        with open(f"metrics_proof_of_stake.txt", "w") as f:
-            f.write(f"Convergence Time: {convergence_time}\n")
-            f.write(f"Message Count: {message_count}\n")
+        metrics = {
+            'node_id': self.node_id,
+            'message_count': message_count,
+            'convergence_time': convergence_time,
+            'coordinator': self.coordinator
+        }
+        with open(f'metrics_pos_node_{self.node_id}.json', 'w') as file:
+            json.dump(metrics, file, indent=4)
+        print(f"Metrics saved for node {self.node_id}: {metrics}")
 
 if __name__ == "__main__":
-    stakeholders = {'Node1': 50, 'Node2': 30, 'Node3': 20}
-    pos = ProofOfStake(stakeholders)
+    nodes = [1, 2, 3, 4, 5]
+    stakes = {1: 10, 2: 20, 3: 30, 4: 40, 5: 50}
+    node_id = int(sys.argv[1]) if len(sys.argv) > 1 else 1
+    pos = ProofOfStakeAlgorithm(nodes, stakes, node_id)
     pos.run()

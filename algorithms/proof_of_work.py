@@ -1,40 +1,46 @@
 # algorithms/proof_of_work.py
-import hashlib
+import sys
 import time
+import random
+import hashlib
+import json
 
-class ProofOfWork:
-    def __init__(self, difficulty):
-        self.difficulty = difficulty
+class ProofOfWorkAlgorithm:
+    def __init__(self, node_id):
+        self.node_id = node_id
         self.message_count = 0
-        self.start_time = time.time()
+        self.start_time = None
 
-    def mine(self, block):
-        block_nonce = 0
-        while not self.is_valid_nonce(block, block_nonce):
+    def mine_block(self, difficulty=4):
+        prefix = '0' * difficulty
+        nonce = 0
+        while True:
+            nonce += 1
             self.message_count += 1
-            block_nonce += 1
-        return block_nonce
-
-    def is_valid_nonce(self, block, nonce):
-        hash_result = hashlib.sha256(f"{block}{nonce}".encode()).hexdigest()
-        return hash_result[:self.difficulty] == '0' * self.difficulty
+            block_content = f"{self.node_id}-{nonce}".encode()
+            block_hash = hashlib.sha256(block_content).hexdigest()
+            if block_hash.startswith(prefix):
+                print(f"Node {self.node_id} mined a block with nonce {nonce}")
+                return nonce
 
     def run(self):
-        block = "Sample Block"
         self.start_time = time.time()
-        nonce = self.mine(block)
+        nonce = self.mine_block()
         end_time = time.time()
-        print(f"Block mined with nonce: {nonce}")
-        print(f"Convergence Time: {end_time - self.start_time} seconds")
-        print(f"Message Count: {self.message_count}")
-        # Store metrics
         self.store_metrics(end_time - self.start_time, self.message_count)
 
     def store_metrics(self, convergence_time, message_count):
-        with open(f"metrics_proof_of_work.txt", "w") as f:
-            f.write(f"Convergence Time: {convergence_time}\n")
-            f.write(f"Message Count: {message_count}\n")
+        metrics = {
+            'node_id': self.node_id,
+            'message_count': message_count,
+            'convergence_time': convergence_time,
+            'nonce': nonce
+        }
+        with open(f'metrics_pow_node_{self.node_id}.json', 'w') as file:
+            json.dump(metrics, file, indent=4)
+        print(f"Metrics saved for node {self.node_id}: {metrics}")
 
 if __name__ == "__main__":
-    pow = ProofOfWork(difficulty=4)
+    node_id = int(sys.argv[1]) if len(sys.argv) > 1 else 1
+    pow = ProofOfWorkAlgorithm(node_id)
     pow.run()
