@@ -27,9 +27,9 @@ class ProofOfWorkAlgorithm:
         self.start_time = time.time()
         nonce = self.mine_block()
         end_time = time.time()
-        self.store_metrics(end_time - self.start_time, self.message_count)
+        self.store_metrics(end_time - self.start_time, self.message_count, nonce)
 
-    def store_metrics(self, convergence_time, message_count):
+    def store_metrics(self, convergence_time, message_count, nonce):
         metrics = {
             'node_id': self.node_id,
             'message_count': message_count,
