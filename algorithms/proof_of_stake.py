@@ -22,6 +22,7 @@ class ProofOfStakeAlgorithm:
             cumulative += stake
             if cumulative >= chosen:
                 self.coordinator = node
+                self.message_count += 1
                 break
 
         print(f"Node {self.coordinator} is selected as the leader based on stake")
