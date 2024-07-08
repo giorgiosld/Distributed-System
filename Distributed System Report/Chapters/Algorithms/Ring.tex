@@ -1,0 +1,135 @@
+\section{Ring}
+
+% The Ring algorithm is another widely-used method for leader election in distributed systems. It is particularly suitable for systems with a logical ring topology. The algorithm proceeds as follows:
+The Ring algorithm is a popular method for leader election in distributed systems with a logical ring topology. This algorithm is effective in scenarios where nodes are organized in a ring and each node can communicate directly with its immediate neighbors. It operates under the assumption that each process has a unique identifier (ID), and the process with the highest ID among the non-faulty processes is elected as the coordinator. The algorithm is favored in environments where nodes are arranged in a circular structure, making it suitable for systems with a pre-defined logical ring topology. Its straightforward approach ensures that a leader is always elected if the system remains functional, thus providing robust coordination \cite{Ref10}.
+
+\subsection{System Model}
+Consider a distributed system consisting of \(n\) processes \(P_1, P_2, \ldots, P_n\) arranged in a logical ring. Each process has a unique identifier (ID) such that:
+
+\[
+ID(P_i) > ID(P_j) \quad \text{for} \quad i > j
+\]
+The Ring Algorithm can be described in the following steps:
+
+\subsubsection{Election Initialization}
+
+When a process \(P_i\) detects that the leader (coordinator) is not functioning, it initiates an election by sending an election message to its immediate neighbor in the ring.
+
+\begin{equation}
+P_i \rightarrow P_{i+1}: \text{Election}(ID(P_i))
+\end{equation}
+
+\subsubsection{Message Passing}
+
+Each process that receives an election message compares the received ID with its own. If the received ID is higher, it forwards the message to its neighbor; otherwise, it replaces the ID with its own and then forwards it.
+
+\begin{equation}
+\text{If } ID(P_j) < ID(P_i), \quad P_j \rightarrow P_{j+1}: \text{Election}(ID(P_j))
+\end{equation}
+
+\subsubsection{Election Process}
+
+The election message circulates around the ring until it returns to the initiator. The initiator then sends a coordinator message with the highest ID found.
+
+\begin{equation}
+P_i \rightarrow \forall P_k: \text{Coordinator}(ID(P_{\text{max}}))
+\end{equation}
+
+If a process receives a coordinator message, it updates its leader to the process that sent the message.
+
+\subsubsection{Algorithm Termination}
+
+The algorithm terminates when a single leader is elected. Each process \(P_i\) has a variable \(Leader_i\) which stores the ID of the elected leader:
+
+\begin{equation}
+Leader_i = ID(P_{\text{max}}) \quad \text{where} \quad P_{\text{max}} \text{ is the elected leader}
+\end{equation}
+
+\subsection{Pseudocode}
+
+The following pseudocode provides a clear and concise representation of the Ring Algorithm. The pseudocode is structured into several key parts, reflecting the steps each process follows to ensure a leader is elected within a distributed system.
+
+\begin{itemize}
+    \item \textbf{Election Initialization:} A process initiates an election upon detecting that the leader is no longer functioning by sending an election message to its immediate neighbor.
+    \item \textbf{Message Passing:} A process that receives an election message forwards it with the highest ID seen so far.
+    \item \textbf{Election Process:} The election message circulates until it returns to the initiator, who then sends a coordinator message.
+    \item \textbf{Coordinator Declaration:} The process that initiated the election sends a coordinator message to all other processes to inform them of the new leader.
+\end{itemize}
+The pseudocode for the Ring Algorithm is as follows:
+
+\begin{verbatim}
+def initiate_election(P):
+    send_election_message(P.next, P.id)
+
+def handle_election_message(sender, id):
+    if id > self.id:
+        forward_message(self.next, id)
+    else:
+        forward_message(self.next, self.id)
+
+def handle_coordinator_message(id):
+    self.coordinator = id
+\end{verbatim}
+
+\subsubsection{Explanation of Pseudocode}
+
+\begin{itemize}
+    \item \texttt{initiate\_election(P)}: This function is called when process \(P\) detects that the current coordinator is not functioning. It sends an election message to its immediate neighbor with its own ID.
+    \item \texttt{handle\_election\_message(sender, id)}: This function is called when a process receives an election message. It forwards the message with the highest ID seen so far.
+    \item \texttt{handle\_coordinator\_message(id)}: This function is called when a process receives a coordinator message. It updates its coordinator variable to reflect the new leader.
+\end{itemize}
+This pseudocode provides a high-level view of the Ring Algorithm's operations, highlighting the interactions between processes and the steps involved in electing a new coordinator in a distributed system.
+
+\subsection{Analysis}
+The analysis of the Ring Algorithm focuses on several key metrics: correctness, liveness, safety, and complexity. These metrics are critical in evaluating the performance and reliability of the algorithm in distributed systems.
+
+\subsubsection{Correctness}
+
+The correctness of the Ring Algorithm is guaranteed by its design. The algorithm ensures that the process with the highest ID among the non-faulty processes is elected as the leader. This is achieved by having each process compare the received ID with its own and forward the highest ID seen so far. Consequently, no two processes can simultaneously declare themselves as leaders, maintaining the integrity of the election process.
+
+\subsubsection{Liveness}
+
+Liveness is a key property that ensures that the election process eventually completes, and a leader is elected. In the Ring Algorithm, every process either declares itself the leader if it has the highest ID or forwards the highest ID seen so far. This guarantees that the system does not enter a state of indefinite waiting, and a leader is always elected, ensuring the continued operation of the distributed system.
+
+\subsubsection{Safety}
+
+Safety is maintained in the Ring Algorithm by ensuring that at most one leader is elected. The algorithm's design allows only the highest ID to be propagated around the ring, preventing multiple processes from simultaneously declaring themselves as leaders. This mechanism ensures that there is always a single, unique leader in the system, thus avoiding conflicts and ensuring consistent coordination.
+
+\subsubsection{Complexity}
+
+The complexity of the Ring Algorithm can be evaluated in terms of time and communication overhead:
+\begin{itemize}
+    \item \textbf{Time Complexity}: the time complexity of the Ring Algorithm in the worst case is \(O(n)\), where \(n\) is the number of processes. This scenario occurs when the election message has to circulate around the entire ring before a leader is elected. Each process forwards the election message to its immediate neighbor, resulting in linear time complexity.
+    \item \textbf{Communication Overhead}: the communication overhead of the Ring Algorithm is moderate. Each process sends a single message to its neighbor, and the total number of messages exchanged is proportional to the number of processes, \(n\). Given \(N\) processes, the message complexity in the worst case can be described as:
+\[
+\Theta(N) = N
+\]
+This complexity arises because each process forwards the election message to its neighbor exactly once.
+\end{itemize}
+
+\subsubsection{Scalability}
+
+Due to its linear communication overhead and time complexity, the Ring Algorithm is well-suited for distributed systems with a logical ring topology. It scales efficiently with the number of processes and maintains performance even in larger systems.
+
+\subsubsection{Fault Tolerance}
+
+The algorithm can handle the failure of any process, including the current leader, by initiating a new election process. Since the election message circulates around the ring, the algorithm is resilient to node failures as long as the ring remains intact. However, the algorithm's efficiency can be impacted if multiple failures occur simultaneously, necessitating multiple election cycles.
+
+In summary, the Ring Algorithm provides a reliable and efficient method for leader election in distributed systems with a ring topology. Its linear time complexity and moderate communication overhead make it suitable for scalable systems, while its robustness ensures reliable leader election even in the presence of node failures.
+
+%\subsection{Analysis}
+%\subsubsection{Correctness}
+
+%The correctness of the Ring Algorithm can be shown by proving that it guarantees the election of the highest ID process as the leader and that no two processes simultaneously declare themselves as leaders.
+
+%\subsubsection{Liveness}
+
+%Every process eventually either declares itself the leader or acknowledges another process as the leader.
+
+%\subsubsection{Safety}
+
+%At most one leader is elected since the election message ensures that only the highest ID is propagated.
+
+%\subsubsection{Complexity}
+
+%The time complexity of the Ring Algorithm in the worst case is \(O(n)\), where \(n\) is the number of processes. This occurs when the election message has to circulate around the entire ring.

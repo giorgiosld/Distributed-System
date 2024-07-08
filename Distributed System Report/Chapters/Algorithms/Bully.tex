@@ -1,0 +1,137 @@
+\section{Bully}
+
+%The Bully algorithm is a well-known method for leader election in distributed systems. It is particularly effective in scenarios where nodes can directly communicate with each other. The algorithm proceeds as follows:
+The Bully algorithm is a well-known method for leader election in distributed systems to dynamically select a coordinator from among a group of processes.  It is particularly effective in scenarios where nodes can directly communicate with each other and it operates under the assumption that each process has a unique identifier (ID), and the process with the highest ID among the non-faulty processes is elected as the coordinator. It is favored in environments where direct communication between all nodes is possible, making it suitable for smaller, tightly-coupled distributed systems. Its straightforward approach and deterministic nature ensure that a leader is always elected if the system remains functional, thus providing robust coordination \cite{Ref9}.
+
+\subsection{System Model}
+Consider a distributed system consisting of \(n\) processes \(P_1, P_2, \ldots, P_n\). Each process has a unique identifier (ID) such that:
+
+\[
+ID(P_i) > ID(P_j) \quad \text{for} \quad i > j
+\]
+The Bully Algorithm can be described in the following steps:
+
+\subsubsection{Election Initialization}
+
+When a process \(P_i\) detects that the leader (coordinator) is not functioning, it initiates an election by sending an election message to all processes with higher IDs.
+
+\begin{equation}
+\forall P_j \quad \text{where} \quad ID(P_j) > ID(P_i), \quad P_i \rightarrow P_j: \text{Election}
+\end{equation}
+
+\subsubsection{Response to Election Message}
+
+Each process \(P_j\) that receives the election message responds with an OK message to \(P_i\) and starts its own election if it is not already doing so.
+
+\begin{equation}
+P_j \rightarrow P_i: \text{OK}
+\end{equation}
+
+\subsubsection{Election Process}
+
+The process waits for a time interval \(T\). If no process with a higher ID responds within \(T\), it declares itself the leader.
+
+\begin{equation}
+\text{If no response within } T, \quad P_i \rightarrow \forall P_k: \text{Coordinator}(ID(P_i))
+\end{equation}
+If a process receives a coordinator message, it updates its leader to the process that sent the message.
+
+\subsubsection{Algorithm Termination}
+
+The algorithm terminates when a single leader is elected. Each process \(P_i\) has a variable \(Leader_i\) which stores the ID of the elected leader:
+
+\begin{equation}
+Leader_i = ID(P_k) \quad \text{where} \quad P_k \text{ is the elected leader}
+\end{equation}
+
+\subsection{Pseudocode}
+
+The following pseudocode provides a clear and concise representation of the Bully Algorithm. The pseudocode is structured into several key parts, reflecting the steps each process follows to ensure a leader is elected within a distributed system.
+
+\begin{itemize}
+    \item \textbf{Election Initialization:} A process initiates an election upon detecting that the leader is no longer functioning by sending an election message to all processes with higher IDs.
+    \item \textbf{Response to Election Message:} A process that receives an election message responds with an acknowledgment and may start its own election if it has a higher ID.
+    \item \textbf{Election Process:} The initiating process waits for responses. If no response is received within a specified time interval, it declares itself the leader.
+    \item \textbf{Coordinator Declaration:} The process that declares itself as the leader sends a coordinator message to all other processes to inform them of the new leader.
+\end{itemize}
+The pseudocode for the Bully Algorithm is as follows:
+
+\begin{verbatim}
+def initiate_election(P):
+    higher_id_processes = get_higher_id_processes(P)
+    if not higher_id_processes:
+        send_victory_message(P)
+    else:
+        send_election_message(higher_id_processes)
+        wait_for_responses()
+
+def handle_election_message(sender):
+    if sender.id < self.id:
+        send_answer_message(sender)
+        initiate_election(self)
+
+def handle_victory_message(sender):
+    self.coordinator = sender
+\end{verbatim}
+
+\subsubsection{Explanation of Pseudocode}
+
+\begin{itemize}
+    \item \texttt{initiate\_election(P)}: This function is called when process \(P\) detects that the current coordinator is not functioning. It identifies all processes with higher IDs and sends them election messages. If no higher ID processes exist, \(P\) declares itself the leader by sending a victory message.
+    \item \texttt{handle\_election\_message(sender)}: This function is called when a process receives an election message from another process (sender). If the sender's ID is lower than the process's own ID, it sends an acknowledgment and initiates its own election process.
+    \item \texttt{handle\_victory\_message(sender)}: This function is called when a process receives a victory message. It updates its coordinator variable to reflect the sender as the new coordinator.
+\end{itemize}
+This pseudocode provides a high-level view of the Bully Algorithm's operations, highlighting the interactions between processes and the steps involved in electing a new coordinator in a distributed system.
+
+\subsection{Analysis}
+The analysis of the Bully Algorithm focuses on several key metrics: correctness, liveness, safety, and complexity. These metrics are critical in evaluating the performance and reliability of the algorithm in distributed systems.
+
+\subsubsection{Correctness}
+
+The correctness of the Bully Algorithm is guaranteed by its design. The algorithm ensures that the process with the highest ID among the non-faulty processes is always elected as the leader. This is achieved by having each process with a higher ID preempt the election process initiated by processes with lower IDs. Consequently, no two processes can simultaneously declare themselves as leaders, thus maintaining the integrity of the election process.
+
+\subsubsection{Liveness}
+
+Liveness is a key property that ensures that the election process eventually completes, and a leader is elected. In the Bully Algorithm, every process either declares itself the leader if it receives no response from higher-ID processes or acknowledges another process as the leader. This guarantees that the system does not enter a state of indefinite waiting, and a leader is always elected, ensuring the continued operation of the distributed system.
+
+\subsubsection{Safety}
+
+Safety is maintained in the Bully Algorithm by ensuring that at most one leader is elected. The algorithm's design allows processes with higher IDs to preempt those with lower IDs, preventing multiple processes from simultaneously declaring themselves as leaders. This mechanism ensures that there is always a single, unique leader in the system, thus avoiding conflicts and ensuring consistent coordination.
+
+\subsubsection{Complexity}
+
+The complexity of the Bully Algorithm can be evaluated in terms of time and communication overhead:
+\begin{itemize}
+    \item \textbf{Time Complexity}: the worst-case time complexity of the Bully Algorithm is \(O(n^2)\), where \(n\) is the number of processes. This scenario occurs when each process \(P_i\) must send messages to all processes with higher IDs, and each of those processes must respond. The quadratic complexity can be a significant drawback in large-scale systems, where the number of messages and the time required for the election process can become substantial.
+    \item \textbf{Communication Overhead}: given \(n\) processes, the message complexity in the worst case can be described as:
+\[ O(n^2) \]
+where:
+\[ (n-1) + (n-2) + \cdots + 1 = \frac{n(n-1)}{2} \approx O(n^2) \]
+This complexity arises because each process with a lower ID sends Election messages to all higher ID processes, and each higher ID process responds with an Answer message if it is active. Consequently, the communication overhead is high, especially in the worst-case scenario. Each process needs to communicate with all higher-ID processes, resulting in a large number of message exchanges. This can lead to network congestion and increased latency, particularly in systems with a large number of nodes.
+
+\end{itemize}
+
+\subsubsection{Scalability}
+
+Due to its high communication overhead and quadratic time complexity, the Bully Algorithm is less suitable for large-scale distributed systems. It is more effective in smaller, tightly-coupled systems where direct communication between nodes is feasible, and the number of processes is manageable.
+
+\subsubsection{Fault Tolerance}
+
+The algorithm can handle the failure of any process, including the current leader, by initiating a new election process. However, in asynchronous systems, it may face challenges with incorrect leader election if timeouts are not accurately set. This can lead to temporary inconsistencies until a new leader is correctly elected.
+
+%\subsection{Analysis}
+%\subsubsection{Correctness}
+
+%The correctness of the Bully Algorithm can be shown by proving that it guarantees the election of the highest ID process as the leader and that no two processes simultaneously declare themselves as leaders.
+
+%\subsubsection{Liveness}
+
+%Every process eventually either declares itself the leader or acknowledges another process as the leader.
+
+%\subsubsection{Safety}
+
+%At most one leader is elected since processes with higher IDs can preempt the election process initiated by processes with lower IDs.
+
+%\subsubsection{Complexity}
+
+%The time complexity of the Bully Algorithm in the worst case is \(O(n^2)\), where \(n\) is the number of processes. This occurs when each process \(P_i\) initiates an election and every other process \(P_j\) responds.

@@ -1,0 +1,59 @@
+\chapter{Background}
+
+\section{Distributed Systems}
+A distributed system is a network of autonomous computers that communicate and coordinate their actions by passing messages. These systems aim to achieve a common goal by leveraging the combined computational power and resources of multiple independent machines \cite{Ref1}. The main characteristics of distributed systems include:
+
+\begin{itemize}
+    \item \textbf{Concurrency}: Multiple components operate concurrently, often performing different tasks simultaneously.
+    \item \textbf{Scalability}: The system can be expanded by adding more nodes, thereby improving performance and capacity.
+    \item \textbf{Fault Tolerance}: The system continues to function correctly even if some components fail.
+    \item \textbf{Resource Sharing}: Resources such as storage and processing power are shared among the nodes.
+    \item \textbf{Transparency}: The system hides the complexity of its distributed nature, making it appear as a single coherent system to users and applications.
+\end{itemize}
+
+Examples of distributed systems include cloud computing platforms, peer-to-peer networks, and large-scale web applications. Distributed systems are widely used due to their ability to handle large volumes of data and provide high availability and reliability.
+
+\section{Leader Election Algorithms}
+Leader election is a fundamental problem in distributed systems. It involves selecting a node, known as the leader, to coordinate the actions of other nodes. The leader is responsible for tasks such as managing resources, coordinating communication, and making decisions that affect the entire system. Efficient leader election algorithms are crucial for maintaining system consistency and performance \cite{Ref2}.
+
+\subsubsection{Election Algorithms in Different Scenarios}
+
+\subsubsection{Chord}
+Chord is a protocol for a distributed hash table (DHT) that provides efficient key-value storage and retrieval in a peer-to-peer network. The Chord algorithm organizes nodes in a circular topology and uses consistent hashing to distribute keys \cite{Ref3}. Leader election in Chord is typically not required for basic operations; however, in cases where coordination is needed, a leader can be elected using techniques such as:
+
+\begin{itemize}
+    \item \textbf{Ring-based Election}: Nodes arrange themselves in a ring and periodically exchange information about their neighbors. The node with the highest identifier can be elected as the leader.
+    \item \textbf{Coordinator Election}: Nodes broadcast their presence and identifiers. After collecting responses, each node can determine the highest identifier and recognize that node as the leader.
+\end{itemize}
+
+\subsubsection{Trees}
+Tree-based structures are common in distributed systems, especially for hierarchical organization and resource management \cite{Ref4}. Leader election in tree-based structures involves selecting a root node or a coordinator at the top of the hierarchy. Common algorithms include:
+
+\begin{itemize}
+    \item \textbf{Depth-First Search (DFS)}: Nodes traverse the tree using DFS and propagate leader information up the tree. The root or a designated node can be elected as the leader.
+    \item \textbf{Breadth-First Search (BFS)}: Similar to DFS, nodes use BFS to explore the tree level by level and propagate leader information until a leader is elected.
+\end{itemize}
+
+\subsubsection{Distributed Ledger (Blockchain)}
+In distributed ledger systems, such as blockchains, leader election is critical for achieving consensus and validating transactions \cite{Ref5}. Common leader election mechanisms include:
+
+\begin{itemize}
+    \item \textbf{Proof of Work (PoW)}: Nodes compete to solve a cryptographic puzzle. The first node to solve the puzzle becomes the leader and gets the right to add a new block to the ledger.
+    \item \textbf{Proof of Stake (PoS)}: Nodes are selected based on the amount of cryptocurrency they hold or stake. The higher the stake, the higher the probability of being elected as the leader.
+    \item \textbf{Practical Byzantine Fault Tolerance (PBFT)}: Nodes participate in a voting process to agree on the leader, which coordinates the agreement on the next block.
+\end{itemize}
+
+\section{Comparative Analysis of Efficiency and Performance}
+Leader election algorithms vary significantly in terms of efficiency and performance, depending on the context and the specific requirements of the distributed system. Key factors to consider in a comparative analysis include:
+
+\begin{itemize}
+    \item \textbf{Complexity}: Complexity in leader election algorithms refers to both the computational effort required (time and space complexity) and the operational intricacies of managing network communications and states across distributed nodes. Time complexity evaluates how the algorithm scales with the number of nodes, which is pivotal as it determines the suitability of the algorithm for large systems. Space complexity, on the other hand, looks at the memory overhead imposed on each node, which becomes crucial in resource-constrained environments. Factors such as network topology and the operational specifics of the algorithm significantly influence the overall complexity \cite{Ref6}.
+    \item \textbf{Convergence Time}: Convergence time measures the speed at which a stable leadership state is achieved following the commencement of the election process. This metric is influenced by network latency, the number of nodes, and the algorithm’s inherent efficiency. Faster convergence times are typically favored as they ensure the system can quickly resume normal operations after a leader failure. However, achieving rapid convergence often involves trade-offs with increased communication overhead or algorithm complexity, necessitating a balanced approach to optimize overall system performance \cite{Ref7}.
+    \item \textbf{Communication Overhead}: Communication overhead is critical as it defines the network load through the volume of messages exchanged during the election process. Efficient algorithms aim to minimize the number of messages (message count) and the size of each message (message size) to reduce bandwidth consumption and prevent network congestion. The cumulative effect of these communications can significantly impact network performance, particularly in terms of scalability and system response times as node counts increase \cite{Ref8}.
+    \item \textbf{Robustness}: The robustness of a leader election algorithm is essential for maintaining system integrity in the face of node or communication failures. A robust algorithm is designed to detect failures promptly and initiate a reliable reelection process to ensure consistent leadership. This includes maintaining consistency across nodes to avoid conflicting leadership claims (split-brain scenarios) and implementing redundancy and recovery mechanisms that bolster system availability. The direct impact of robustness is seen in the system's ability to sustain minimal service disruptions during critical periods.
+    \item \textbf{Scalability}: Scalability assesses the ability of the algorithm to maintain performance and efficiency as the number of nodes increases. An algorithm with high scalability can handle a large-scale system without a significant drop in performance, making it suitable for modern distributed environments with dynamic and growing network sizes.
+
+
+\end{itemize}
+By examining these factors in detail, it becomes possible to identify the most appropriate leader election algorithm for a given distributed system, aligning algorithmic strengths with specific operational demands and environmental constraints.
+

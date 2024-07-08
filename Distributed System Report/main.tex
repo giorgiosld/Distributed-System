@@ -1,0 +1,51 @@
+\documentclass[oneside, 12pt]{unicam_resume}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{epigraph}
+\usepackage{float}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% BEGIN DATA FRONTPAGE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{Comparative Analysis of Efficiency and Performance in Leader Election Algorithms}
+
+\university{University of Camerino}%
+\school{Science and Technology}%
+\course{Master Degree in Computer Science (LM-18)}%
+
+
+\author{Giorgio Saldana}
+\coauthor{Michele Loreti}
+\academicyear{2023/2024}%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% END FRONTPAGE DATA
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\bibliography{./bibliography}
+%\addbibresource{bibliography.bib}
+\bibliography{references}
+
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\input{Chapters/Abstract}
+\input{Chapters/Introduction}
+\input{Chapters/Background}
+\input{Chapters/Algorithms}
+\input{Chapters/Comparison}
+\input{Chapters/Conclusion}
+
+\appendix
+\printindex
+
+\printbibliography
+
+\nocite{*}
+
+\end{document}

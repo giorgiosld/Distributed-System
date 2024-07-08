@@ -1,0 +1,50 @@
+\chapter{Algorithms}
+
+This section delves into the specifics of various leader election algorithms employed in distributed systems, namely the Bully algorithm, Ring algorithm, Proof of Work (PoW), and Proof of Stake (PoS), providing an overview of each algorithm followed by an in-depth explanation of their mechanisms and the formal mathematical theories that underpin them, highlighting the critical role of leader election algorithms in ensuring coordination, efficiency, and fault tolerance in distributed systems, and exploring how the choice of algorithm affects system performance in terms of communication overhead, convergence time, and robustness.
+
+\input{Chapters/Algorithms/Bully}
+\input{Chapters/Algorithms/Ring}
+\input{Chapters/Algorithms/Proof_of_work}
+\input{Chapters/Algorithms/Proof_of_stake}
+%\section{Bully}
+
+%The Bully algorithm is a well-known method for leader election in distributed systems. It is particularly effective in scenarios where nodes can directly communicate with each other. The algorithm proceeds as follows:
+%The Bully algorithm is a well-known method for leader election in distributed systems to dynamically select a coordinator from among a group of processes.  It is particularly effective in scenarios where nodes can directly communicate with each other and it operates under the assumption that each process has a unique identifier (ID), and the process with the highest ID among the non-faulty processes is elected as the coordinator. It is favored in environments where direct communication between all nodes is possible, making it suitable for smaller, tightly-coupled distributed systems. Its straightforward approach and deterministic nature ensure that a leader is always elected if the system remains functional, thus providing robust coordination.
+
+%\subsection{Assumptions}
+
+%The Bully algorithm makes several key assumptions:
+%\begin{enumerate}
+%    \item The system is synchronous.
+%    \item Processes may fail at any time, including during the execution of the algorithm.
+%    \item A failed process stops working and resumes upon recovery.
+%    \item A failure detector is present to identify failed processes.
+%    \item Message delivery between processes is reliable.
+%    \item Each process knows its own ID and address, as well as those of all other processes.
+%\end{enumerate}
+
+%\subsection{Algorithm Steps}
+
+%\begin{enumerate}
+%    \item \textbf{Election Initiation}: When a process \( P \) detects the failure of the current coordinator or when it recovers from a failure, it starts the election process if it is not the highest ID process. \( P \) sends an Election message to all processes with higher IDs.
+%    \item \textbf{Handling Responses}: If \( P \) does not receive any Answer messages from higher ID processes within a timeout period, it declares itself the coordinator by sending a Victory message to all other processes. If \( P \) receives an Answer message, it waits for a Victory message from the higher ID process that responded.
+%    \item \textbf{Receiving Election Messages}: When a process receives an Election message from a lower ID process, it responds with an Answer message. It then starts its own election if it is not already participating in one by sending Election messages to higher ID processes.
+%    \item \textbf{Receiving Victory Messages}: When a process receives a Victory message, it updates its coordinator to the sender of the Victory message.
+%\end{enumerate}
+
+
+%\subsection{Analysis}
+
+%\begin{itemize}
+%    \item \textbf{Safety}: The algorithm guarantees that at most one coordinator is elected. If two processes attempt to become the coordinator simultaneously, the one with the higher ID will prevail, as lower ID processes will concede upon receiving Answer messages from higher ID processes.
+%    \item \textbf{Liveness}: The algorithm ensures that eventually a coordinator will be elected, provided the system is synchronous and the failure detector works correctly. Even if multiple failures occur, the election process will continue until a coordinator is selected.
+%    \item \textbf{Message Complexity}: The worst-case scenario for message exchange occurs when the process with the lowest ID initiates an election. This requires \( O(N^2) \) messages, where \( N \) is the number of processes. This includes Election messages, Answer messages, and Victory messages.
+%\end{itemize}
+
+%\subsection{Mathematical Formulation}
+
+%Given \( N \) processes, the message complexity in the worst case can be described as:
+%\[ \Theta(N^2) \]
+%where:
+%\[ (N-1) + (N-2) + \cdots + 1 = \frac{N(N-1)}{2} \approx \Theta(N^2) \]
+%This complexity arises because each process with a lower ID sends Election messages to all higher ID processes, and each higher ID process responds with an Answer message if it is active.

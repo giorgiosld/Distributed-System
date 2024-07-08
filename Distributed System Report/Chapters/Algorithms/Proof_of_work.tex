@@ -1,0 +1,135 @@
+\section{Proof of Work}
+
+% The Proof of Work (PoW) algorithm is a widely-used method for leader election in blockchain-based distributed systems. It is particularly suitable for decentralized networks where security and consensus are critical. The algorithm proceeds as follows:
+The Proof of Work (PoW) algorithm is a widely-used method for leader election in blockchain-based distributed systems. This algorithm is effective in scenarios where nodes compete to solve a cryptographic puzzle, with the first node to solve the puzzle being elected as the leader. It operates under the assumption that each process has a unique computational power, and the process that solves the puzzle first gets the right to add a new block to the blockchain. The algorithm is favored in environments where security, decentralization, and consensus are critical, making it suitable for blockchain networks. Its probabilistic approach ensures that a leader is always elected, thus providing robust coordination \cite{Ref11}.
+
+\subsection{System Model}
+Consider a distributed system consisting of \(n\) processes \(P_1, P_2, \ldots, P_n\) that are part of a blockchain network. Each process competes to solve a cryptographic puzzle, and the process that solves it first is elected as the leader:
+
+\[
+\text{Solve}(P_i) \quad \text{if} \quad \text{Hash}(P_i) < \text{Target}
+\]
+The Proof of Work Algorithm can be described in the following steps:
+
+\subsubsection{Puzzle Initialization}
+
+Each process \(P_i\) attempts to solve a cryptographic puzzle by finding a nonce that, when hashed with the block data, produces a hash value less than a predefined target.
+
+\begin{equation}
+\text{Hash}(P_i \oplus \text{nonce}) < \text{Target}
+\end{equation}
+
+\subsubsection{Competition Process}
+
+Each process continuously attempts to find a valid nonce. The first process to find a valid nonce broadcasts its solution to the network.
+
+\begin{equation}
+P_i \rightarrow \forall P_j: \text{Solution}(\text{nonce})
+\end{equation}
+
+\subsubsection{Validation and Consensus}
+
+Other processes verify the solution. If the solution is valid, the process that found the nonce is elected as the leader and gets the right to add a new block to the blockchain.
+
+\begin{equation}
+\text{If valid, } P_j \rightarrow \forall P_k: \text{New Block}(P_i)
+\end{equation}
+
+\subsubsection{Algorithm Termination}
+
+The algorithm terminates when a single leader is elected and a new block is added to the blockchain. Each process \(P_i\) updates its blockchain to include the new block:
+
+\begin{equation}
+\text{Blockchain}_i = \text{Blockchain}_i + \text{New Block}(P_i)
+\end{equation}
+
+\subsection{Pseudocode}
+
+The following pseudocode provides a clear and concise representation of the Proof of Work Algorithm. The pseudocode is structured into several key parts, reflecting the steps each process follows to ensure a leader is elected within a blockchain network.
+
+\begin{itemize}
+    \item \textbf{Puzzle Initialization:} Each process attempts to solve a cryptographic puzzle by finding a valid nonce.
+    \item \textbf{Competition Process:} Each process continuously attempts to find a valid nonce and broadcasts its solution if successful.
+    \item \textbf{Validation and Consensus:} Other processes verify the solution and update the blockchain with the new block.
+\end{itemize}
+The pseudocode for the Proof of Work Algorithm is as follows:
+
+\begin{verbatim}
+def find_nonce(P):
+    while True:
+        nonce = generate_nonce()
+        if hash(P.data + nonce) < Target:
+            broadcast_solution(P, nonce)
+            break
+
+def handle_solution(sender, nonce):
+    if validate_solution(sender.data, nonce):
+        update_blockchain(sender, nonce)
+\end{verbatim}
+
+\subsubsection{Explanation of Pseudocode}
+
+\begin{itemize}
+    \item \texttt{find\_nonce(P)}: This function is called by each process to find a valid nonce. It generates nonces until a valid one is found and then broadcasts the solution.
+    \item \texttt{handle\_solution(sender, nonce)}: This function is called when a process receives a solution. It validates the solution and updates the blockchain if the solution is correct.
+\end{itemize}
+This pseudocode provides a high-level view of the Proof of Work Algorithm's operations, highlighting the interactions between processes and the steps involved in electing a new leader and adding a new block to the blockchain.
+
+\subsection{Analysis}
+The analysis of the Proof of Work (PoW) Algorithm focuses on several key metrics: correctness, liveness, safety, and complexity. These metrics are critical in evaluating the performance and reliability of the algorithm in blockchain-based distributed systems.
+
+\subsubsection{Correctness}
+
+The correctness of the Proof of Work Algorithm is guaranteed by its design. The algorithm ensures that the first process to solve the cryptographic puzzle is elected as the leader. This is achieved by having each process attempt to find a nonce that, when hashed with the block data, produces a hash value below a predefined target. Consequently, only one process can solve the puzzle first, thus maintaining the integrity of the election process.
+
+\subsubsection{Liveness}
+
+Liveness is a key property that ensures that the election process eventually completes, and a leader is elected. In the Proof of Work Algorithm, every process continuously attempts to find a valid nonce. Eventually, one process will find a solution and broadcast it to the network, ensuring that the system does not enter a state of indefinite waiting, and a leader is always elected, ensuring the continued operation of the blockchain network.
+
+\subsubsection{Safety}
+
+Safety is maintained in the Proof of Work Algorithm by ensuring that at most one leader is elected. The cryptographic puzzle's difficulty ensures that only the first process to find a valid nonce is elected as the leader. This mechanism prevents multiple processes from simultaneously declaring themselves as leaders, thus avoiding conflicts and ensuring consistent coordination.
+
+\subsubsection{Complexity}
+
+The complexity of the Proof of Work Algorithm can be evaluated in terms of time and communication overhead:
+
+\begin{itemize}
+    \item \textbf{Time Complexity}: the time complexity of the Proof of Work Algorithm is probabilistic and depends on the difficulty of the cryptographic puzzle. On average, it takes time proportional to the inverse of the target threshold. If the target is set such that \(T\) is the average time to solve the puzzle, then:
+
+\[
+T \approx \frac{1}{\text{Target}}
+\]
+
+This complexity arises because each process must repeatedly hash the block data with different nonces until a valid solution is found.
+    \item \textbf{Communication Overhead}: the communication overhead of the Proof of Work Algorithm is low to moderate. The main communication occurs when a process broadcasts the solution to the network. Given that all nodes need to verify the solution, the number of messages exchanged is proportional to the number of processes, \(n\).
+\end{itemize}
+
+\subsubsection{Scalability}
+
+The Proof of Work Algorithm scales effectively with the number of processes. The probabilistic nature of the algorithm ensures that, on average, a leader is elected within a predictable timeframe, regardless of the number of participating nodes. However, the computational resources required for solving the puzzle can increase significantly with higher network difficulty.
+
+\subsubsection{Fault Tolerance}
+Due to its decentralized nature the Proof of Work Algorithm is higly robust. The network can tolerate node failures as the remaining nodes continue competing to solve the puzzle. However, it can be slow to converge to a new leader if the network is partitioned or if many nodes fail simultaneously.
+%\subsubsection{Energy Consumption}
+
+%One of the significant drawbacks of the Proof of Work Algorithm is its high energy consumption. The continuous and intensive computation required to solve the cryptographic puzzle results in substantial energy usage, making it less environmentally friendly and cost-effective for large-scale deployment.
+
+In summary, while the Proof of Work Algorithm provides a robust and secure method for leader election in blockchain networks, its high energy consumption and probabilistic time complexity are notable drawbacks. Its design ensures correctness, liveness, and safety, making it suitable for decentralized systems where security and consensus are critical.
+
+%\subsubsection{Correctness}
+
+%The correctness of the Proof of Work Algorithm can be shown by proving that it guarantees the election of a single leader who successfully solves the cryptographic puzzle.
+
+%\subsubsection{Liveness}
+
+%Every process eventually either solves the puzzle or acknowledges another process as the solver.
+
+%\subsubsection{Safety}
+
+%At most one leader is elected since the cryptographic puzzle ensures that only the first process to find a valid nonce is elected.
+
+%\subsubsection{Complexity}
+
+%The time complexity of the Proof of Work Algorithm is probabilistic and depends on the difficulty of the cryptographic puzzle. On average, it takes time proportional to the inverse of the target threshold.
+

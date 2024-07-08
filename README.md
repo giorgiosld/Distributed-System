@@ -4,10 +4,12 @@ This repository contains a report on the comparison of leader election algorithm
 ## Directory Structure
 
 - `algorithms/`: Contains the implementation of each algorithm.
+- `Distributed System Report`: Contains the LatEx code about the report.
 - `Dockerfile`: Dockerfile for building the Docker image.
 - `docker-compose.yml`: Docker Compose file for orchestrating the services.
 - `requirements.txt`: List of Python dependencies.
 - `README.md`: Project documentation.
+- `Distributed_System_Report_Saldana.pdf`: Report delivered for the exam.
 
 ## Algorithms
 
