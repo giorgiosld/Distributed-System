@@ -14,7 +14,7 @@ This repository contains a report on the comparison of leader election algorithm
 ## Algorithms
 
 - Bully Algorithm
-- RAFT Algorithm
+- Ring Algorithm
 - Proof of Work
 - Proof of Stake
 
