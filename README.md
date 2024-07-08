@@ -1,9 +1,5 @@
 # Distributed-System
-This repo contains the report about the comparison of leader election algorithms in distributed systems and the code which implements some algorithms that are evaluated. All these materials is about the course of Distributed Systems supplied in the Master Degree (LM-18) at the University of Camerino.
-
-# Leader Election Algorithms
-
-This project implements and compares various leader election algorithms using Docker and Zookeeper.
+This repository contains a report on the comparison of leader election algorithms in distributed systems, along with the code implementing some of the evaluated algorithms. These materials are part of the Distributed Systems course in the Master Degree (LM-18) at the University of Camerino. The project implements and compares various leader election algorithms using Docker and Zookeeper.
 
 ## Directory Structure
 
@@ -29,4 +25,6 @@ This project implements and compares various leader election algorithms using Do
 2. **Run the containers**:
     ```bash
    docker compose up
+
+This will start the Zookeeper container first, followed by the containers for each of the algorithms.
 

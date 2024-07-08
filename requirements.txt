@@ -1,5 +1,2 @@
-kazoo
-py-raft
-pyethereum
 matplotlib
-numpy
+
